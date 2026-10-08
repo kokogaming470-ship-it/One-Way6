@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
   if (!key) return res.status(200).json({ error: 'nokey' });
 
   const c = cache[m] || (cache[m] = {});
-  if (c.lat != null && Date.now() - c.t < 45000) return res.status(200).json(c);
+  if (c.lat != null && Date.now() - c.t < 120000) return res.status(200).json(c);
 
   await new Promise((resolve) => {
     let ws, done = false, grace;
@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
       try { ws.close(); } catch (e) {}
       resolve();
     };
-    const timer = setTimeout(finish, 8000);
+    const timer = setTimeout(finish, 50000);
     try { ws = new WebSocket('wss://stream.aisstream.io/v0/stream'); } catch (e) { return finish(); }
     ws.on('open', () => ws.send(JSON.stringify({
       APIKey: key,
