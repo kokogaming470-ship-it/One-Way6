@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
         try { ws.close(); } catch (e) {}
         resolve();
       };
-      const timer = setTimeout(finish, 20000);
+      const timer = setTimeout(finish, 55000);
       try {
         ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
       } catch (e) {
