@@ -92,5 +92,8 @@ module.exports = async (req, res) => {
     if (c.lat == null) o.error = 'nodata';
     out[i] = o;
   });
+  // single MMSI without comma -> flat object (backward compatible)
+  const single = ids.length === 1 && !String(req.query.mmsi).includes(',');
+  if (single) { const o = out[ids[0]]; delete o.error; return res.status(200).json(o); }
   res.status(200).json(out);
 };
