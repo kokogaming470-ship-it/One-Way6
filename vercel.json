@@ -1,5 +1,0 @@
-{
-  "functions": {
-    "api/ais.js": { "maxDuration": 60 }
-  }
-}
