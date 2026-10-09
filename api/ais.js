@@ -3,6 +3,8 @@
 const WebSocket = require('ws');
 const cache = globalThis.__aisCache || (globalThis.__aisCache = {});
 const FRESH_MS = 120000;
+// Safe default (9s) fits Vercel's default function limit. To listen longer, set env var AIS_TIMEOUT_MS (e.g. 55000) and raise maxDuration.
+const LISTEN_MS = Number(process.env.AIS_TIMEOUT_MS) || 9000;
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -32,7 +34,7 @@ module.exports = async (req, res) => {
         try { ws.close(); } catch (e) {}
         resolve();
       };
-      const timer = setTimeout(finish, 55000);
+      const timer = setTimeout(finish, LISTEN_MS);
       try {
         ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
       } catch (e) {
