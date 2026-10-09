@@ -43,8 +43,7 @@ module.exports = async (req, res) => {
         ws.send(JSON.stringify({
           APIKey: key,
           BoundingBoxes: [[[-90, -180], [90, 180]]],
-          FiltersShipMMSI: need,
-          FilterMessageTypes: ['PositionReport', 'ShipStaticData']
+          FiltersShipMMSI: need
         }))
       );
 
@@ -60,8 +59,11 @@ module.exports = async (req, res) => {
 
         if (meta.ShipName && meta.ShipName.trim()) c.name = meta.ShipName.trim();
 
-        if (j.MessageType === 'PositionReport' && msg.PositionReport) {
-          const p = msg.PositionReport;
+        // Class A, Class B (small vessels) and long-range (satellite) position messages
+        const posKey = ['PositionReport', 'StandardClassBPositionReport', 'ExtendedClassBPositionReport', 'LongRangeAisBroadcastMessage']
+          .find((k) => j.MessageType === k && msg[k]);
+        if (posKey && msg[posKey].Latitude != null) {
+          const p = msg[posKey];
           c.lat = p.Latitude; c.lon = p.Longitude; c.sog = p.Sog; c.cog = p.Cog; c.t = Date.now();
         } else if (j.MessageType === 'ShipStaticData' && msg.ShipStaticData) {
           const s = msg.ShipStaticData;
